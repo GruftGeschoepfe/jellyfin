@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# set this namespace on all resources
+namespace: jellyfin
+
+helmcharts:
+  # https://github.com/jellyfin/jellyfin-helm/tree/master/charts/jellyfin
+  - name: jellyfin
+    repo: https://jellyfin.github.io/jellyfin-helm
+    version: 2.3.0
+    releaseName: jellyfin
+    valuesFile: values.yaml
+resources:
+  - namespace.yaml
