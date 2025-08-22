@@ -57,6 +57,7 @@ spec:
   resources:
     requests:
       storage: 5Gi
+  storageClassName: cephfs
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -74,7 +75,8 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 25Gi
+      storage: 5Gi
+  storageClassName: cephfs
 ---
 apiVersion: apps/v1
 kind: Deployment
