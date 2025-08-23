@@ -41,6 +41,30 @@ spec:
   type: LoadBalancer
 ---
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jellyfin-wunderhort-medien-static
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 5Ti
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: jellyfin-wunderhort-medien-static
+    namespace: jellyfin
+  csi:
+    driver: nfs.csi.k8s.io
+    volumeAttributes:
+      server: wunderhort-nfs.irminsul
+      share: /wunderhort/medien
+    volumeHandle: wunderhort-nfs.irminsul-22f54ef276c01346525e114c570fa4406a7aff82-medien
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: dummy-nfs-external
+  volumeMode: Filesystem
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
@@ -77,6 +101,21 @@ spec:
     requests:
       storage: 5Gi
   storageClassName: cephfs
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-wunderhort-medien-static
+  namespace: jellyfin
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Ti
+  storageClassName: dummy-nfs-external
+  volumeMode: Filesystem
+  volumeName: jellyfin-wunderhort-medien-static
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -129,6 +168,9 @@ spec:
           name: config
         - mountPath: /media
           name: media
+        - mountPath: /wunderhort/medien
+          name: wunderhort-medien
+          readOnly: true
       securityContext: {}
       serviceAccountName: jellyfin
       volumes:
@@ -138,3 +180,6 @@ spec:
       - name: media
         persistentVolumeClaim:
           claimName: jellyfin-media
+      - name: wunderhort-medien
+        persistentVolumeClaim:
+          claimName: jellyfin-wunderhort-medien-static

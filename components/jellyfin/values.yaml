@@ -11,3 +11,13 @@ persistence:
   media:
     size: 5Gi
     storageClass: cephfs
+
+volumes:
+  - name: wunderhort-medien
+    persistentVolumeClaim:
+      claimName: jellyfin-wunderhort-medien-static
+
+volumeMounts:
+  - name: wunderhort-medien
+    mountPath: /wunderhort/medien
+    readOnly: true

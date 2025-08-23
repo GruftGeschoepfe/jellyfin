@@ -1,0 +1,33 @@
+# https://github.com/kubernetes-csi/csi-driver-nfs/blob/master/deploy/example/README.md#pvpvc-usage-static-provisioning
+# https://github.com/kubernetes-csi/csi-driver-nfs/blob/master/docs/driver-parameters.md
+# https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/deploy/example/pv-nfs-csi.yaml
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jellyfin-wunderhort-medien-static
+spec:
+  # this storage class does not exist, the PV and PVC
+  # are matched based on their name
+  storageClassName: dummy-nfs-external
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 5Ti
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: jellyfin-wunderhort-medien-static
+    namespace: jellyfin
+  csi:
+    driver: nfs.csi.k8s.io
+    # the examples recommend this format: {nfs-server-address}#{sub-dir-name}#{share-name}
+    # since our share was not dynamically provisioned and hence does not have a subdirectory
+    # we made one up, that should hopefully be unique
+    # make sure this value is unique for every share in the cluster
+    volumeHandle: wunderhort-nfs.irminsul-22f54ef276c01346525e114c570fa4406a7aff82-medien
+    volumeAttributes:
+      server: wunderhort-nfs.irminsul
+      share: /wunderhort/medien
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem

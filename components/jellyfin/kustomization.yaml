@@ -13,3 +13,5 @@ helmcharts:
     valuesFile: values.yaml
 resources:
   - namespace.yaml
+  - pvc-wunderhort_medien.yaml
+  - pv-wunderhort_medien.yaml
